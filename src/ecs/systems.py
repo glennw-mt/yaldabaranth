@@ -17,13 +17,13 @@ class Input(Processor):
                 elif event.type == pg.KEYDOWN:
                     match event.key:
                         case pg.K_LEFT:
-                            velocity.x -= O.GRID_SIZE
+                            velocity.x -= 1
                         case pg.K_RIGHT:
-                            velocity.x += O.GRID_SIZE
+                            velocity.x += 1
                         case pg.K_UP:
-                            velocity.y -= O.GRID_SIZE
+                            velocity.y -= 1
                         case pg.K_DOWN:
-                            velocity.y += O.GRID_SIZE
+                            velocity.y += 1
 
 
 class Movement(Processor):
@@ -35,13 +35,31 @@ class Movement(Processor):
             velocity.y = 0
 
 
-class Display(Processor):
+class Camera(Processor):
     def process(self, screen):
+        _, (_, player_position) = esper.get_components(C.Player, C.Position)[0]
+        _, (_, camera_position) = esper.get_components(C.Camera, C.Position)[0]
+        camera_position.x = player_position.x
+        camera_position.y = player_position.y
+
+
+class Display(Processor):
+    def process(self, screen: pg.Surface):
         screen.fill("black")
+        _, (_, camera_position) = esper.get_components(C.Camera, C.Position)[0]
         for _, (position, display) in esper.get_components(C.Position, C.Display):
             pg.draw.rect(
                 screen,
                 display.color,
-                (position.x, position.y, O.GRID_SIZE, O.GRID_SIZE),
+                (
+                    (position.x - camera_position.x) * O.GRID_SIZE
+                    + screen.width // 2
+                    - O.GRID_SIZE / 2,
+                    (position.y - camera_position.y) * O.GRID_SIZE
+                    + screen.height // 2
+                    - O.GRID_SIZE / 2,
+                    O.GRID_SIZE,
+                    O.GRID_SIZE,
+                ),
             )
         pg.display.flip()

@@ -2,20 +2,25 @@ from dataclasses import dataclass
 
 
 @dataclass
+class Camera:
+    pass
+
+
+@dataclass
 class Player:
     pass
 
 
 @dataclass
 class Position:
-    x: int
-    y: int
+    x: float
+    y: float
 
 
 @dataclass
 class Velocity:
-    x: int
-    y: int
+    x: float
+    y: float
 
 
 @dataclass
