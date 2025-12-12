@@ -1,3 +1,7 @@
+main.build
+main.dist
+nuitka-crash-report.xml
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

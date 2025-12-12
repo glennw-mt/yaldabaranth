@@ -24,8 +24,10 @@ async def main():
     esper.add_processor(S.Input())
     esper.add_processor(S.Movement())
     esper.add_processor(S.Display())
+    clock.tick(60)
     while True:
-        esper.process(screen)
+        delta: float = clock.get_time() / 1000.0
+        esper.process(screen, delta)
         clock.tick(60)
 
 
