@@ -1,10 +1,13 @@
 pub mod ecs;
 pub mod options;
+pub mod sound;
 pub mod tileset;
 
 use ecs::{entities as E, systems as S};
 use hecs::*;
 use macroquad::{prelude::*, rand};
+
+use crate::sound::{AudioEngine, SoundType};
 
 fn test_spawn(ecs: &mut World) {
     E::player(ecs, &Vec2::new(0., 0.));
@@ -31,17 +34,18 @@ async fn main() {
             pixel[2] = 255;
         }
     }
-
     let tileset = Texture2D::from_image(&tileset_img);
     tileset.set_filter(FilterMode::Nearest);
+    let audio_engine = AudioEngine::new().await;
     test_spawn(&mut ecs);
     set_fullscreen(true);
     let mut camera =
         Camera2D::from_display_rect(Rect::new(0., 0., screen_width(), screen_height()));
     camera.target.x = 0.;
     camera.target.y = 0.;
+    audio_engine.play_sound(SoundType::WIND);
     loop {
-        S::control(&mut ecs);
+        S::control(&mut ecs, &audio_engine);
         S::update_camera(&ecs, &mut camera);
         S::see_entities(&mut ecs, &camera);
         S::draw(&mut ecs, &camera, &tileset);

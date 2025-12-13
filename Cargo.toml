@@ -8,6 +8,7 @@ debug = true
 
 [dependencies]
 anyhow = "1.0.100"
+dashmap = { version = "6.1.0", features = ["rayon"] }
 hecs = "0.10.5"
-macroquad = { version = "0.4.14", features = ["backtrace"] }
+macroquad = { version = "0.4.14", features = ["audio", "backtrace"] }
 rayon = "1.11.0"

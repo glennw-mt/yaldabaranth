@@ -1,5 +1,6 @@
 use crate::ecs::components as C;
 use crate::options::*;
+use crate::sound::{AudioEngine, SoundType};
 use hecs::*;
 use macroquad::miniquad::window::screen_size;
 use macroquad::prelude::*;
@@ -53,8 +54,9 @@ pub fn update_camera(ecs: &World, camera: &mut Camera2D) {
     camera.zoom.x = -camera.zoom.x;
 }
 
-pub fn control(ecs: &mut World) {
+pub fn control(ecs: &mut World, audio: &AudioEngine) {
     for (_, (pos, _)) in ecs.query_mut::<(&mut C::Position, &C::Player)>() {
+        let old_pos = pos.clone();
         if is_key_pressed(KeyCode::Up) {
             pos.y -= 1.;
         }
@@ -66,6 +68,9 @@ pub fn control(ecs: &mut World) {
         }
         if is_key_pressed(KeyCode::Right) {
             pos.x += 1.;
+        }
+        if old_pos != pos.clone() {
+            audio.play_sound(SoundType::WALK);
         }
     }
 }
@@ -81,7 +86,7 @@ pub fn see_entities(ecs: &mut World, camera: &Camera2D) {
             .par_iter()
             .filter_map(|(entity, (pos, _))| {
                 let real_pos = Vec2::new(pos.x * GRID_SIZE, pos.y * GRID_SIZE);
-                if real_pos.distance(camera_pos) < screen_size.0 {
+                if real_pos.distance(camera_pos) < screen_size.0.max(screen_size.1) {
                     return Some(entity.clone());
                 }
                 return None;
