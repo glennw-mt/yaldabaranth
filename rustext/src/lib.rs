@@ -1,10 +1,15 @@
-use godot::{
-    classes::{CompressedTexture2D, ImageTexture, Sprite2D, Texture2D},
-    prelude::*,
-};
+mod ecs;
+mod tileset;
+
+use ecs::systems::*;
+use godot::{classes::Camera2D, global::randf_range, prelude::*};
+use hecs::*;
+use sled::Db;
+use tileset::Tileset;
+
+use crate::ecs::entities::{spawn_player, spawn_tree};
 
 struct RustExt;
-
 #[gdextension]
 unsafe impl ExtensionLibrary for RustExt {}
 
@@ -12,33 +17,42 @@ unsafe impl ExtensionLibrary for RustExt {}
 #[class(base=Node2D)]
 struct Game {
     base: Base<Node2D>,
+    tileset: Tileset,
+    camera: Gd<Camera2D>,
+    ecs: World,
+    db: Db,
 }
 #[godot_api]
 impl INode2D for Game {
     fn init(base: Base<Node2D>) -> Self {
-        Self { base }
+        let tileset = Tileset::new("res://assets/urizen_tileset.png", 12, 48.);
+        let camera = Camera2D::new_alloc();
+        let ecs = World::new();
+        let db = sled::open("ecs.db").expect("Could not open ecs database.");
+        Self {
+            base,
+            tileset,
+            camera,
+            ecs,
+            db,
+        }
     }
     fn ready(&mut self) {
-        let tileset_compressed_texture: Gd<CompressedTexture2D> =
-            load("res://assets/urizen_tileset.png");
-        let mut tileset_image = tileset_compressed_texture.get_image().unwrap();
-        let width = tileset_image.get_width();
-        let height = tileset_image.get_height();
-        for x in 0..width {
-            for y in 0..height {
-                let pixel = tileset_image.get_pixel(x, y);
-                if pixel == Color::WHITE || pixel == Color::BLACK || pixel.a == 0.0 {
-                    continue;
-                };
-                tileset_image.set_pixel(x, y, Color::WHITE);
+        self.to_gd().add_child(&self.camera);
+        spawn_player(self, 0, 0);
+        for x in -500..500 {
+            for y in -500..500 {
+                if randf_range(0., 100.) > 90. {
+                    spawn_tree(self, x, y);
+                }
             }
         }
-        let tileset_texture = ImageTexture::create_from_image(&tileset_image);
-        let mut tileset_sprite = Sprite2D::new_alloc();
-        tileset_sprite.set_texture(&tileset_texture.unwrap());
-        tileset_sprite.set_scale(Vector2::new(2.0, 2.0));
-        self.to_gd().add_child(&tileset_sprite);
     }
-    fn process(&mut self, delta: f64) {}
-    fn physics_process(&mut self, delta: f64) {}
+    fn process(&mut self, delta: f64) {
+        handle_input(self);
+        move_entities(self);
+        move_camera(self, delta);
+        sync_sprite_positions(self);
+        despawn_far_entities(self);
+    }
 }
