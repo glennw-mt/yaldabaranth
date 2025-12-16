@@ -1,0 +1,13 @@
+[package]
+name = "rustext"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+godot = "0.4.5"
+hecs = "0.10.5"
+rayon = "1.11.0"
+

@@ -1,8 +1,6 @@
-# Xmake cache
-.xmake/
-build/
-
-# MacOS Cache
-.DS_Store
-
-.cache
+# Godot 4+ specific ignores
+.godot/
+/android/
+/rustext/target
+/rustext/Cargo.lock
+/exports
