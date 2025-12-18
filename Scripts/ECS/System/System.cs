@@ -56,28 +56,37 @@ public partial class S
       world.DrawTexture(tile, gp, color);
     });
   }
+  public static void DisplayMenu(World world)
+  {
+
+  }
+  public static void DisplayPaused(World world)
+  {
+    Display(world);
+  }
   public static void Control(World world)
   {
     var query = world.entities.Query<C.Velocity, C.Player>();
     query.ForEachEntity((ref C.Velocity v, ref C.Player _, Entity _) =>
     {
-      if (Input.IsActionJustPressed("ui_up"))
+      if (Input.IsActionJustPressed("ui_up")) v.V += Vector2I.Up;
+      if (Input.IsActionJustPressed("ui_down")) v.V += Vector2I.Down;
+      if (Input.IsActionJustPressed("ui_left")) v.V += Vector2I.Left;
+      if (Input.IsActionJustPressed("ui_right")) v.V += Vector2I.Right;
+      if (Input.IsActionJustPressed("menu"))
       {
-        v.V += Vector2I.Up;
-      }
-      if (Input.IsActionJustPressed("ui_down"))
-      {
-        v.V += Vector2I.Down;
-      }
-      if (Input.IsActionJustPressed("ui_left"))
-      {
-        v.V += Vector2I.Left;
-      }
-      if (Input.IsActionJustPressed("ui_right"))
-      {
-        v.V += Vector2I.Right;
+        world.gameState = GameState.Menu;
+        world.menu.Visible = true;
       }
     });
+  }
+  public static void ControlMenu(World world)
+  {
+    if (Input.IsActionJustPressed("menu"))
+    {
+      world.gameState = GameState.Running;
+      world.menu.Visible = false;
+    }
   }
   public static void MoveEntities(World world)
   {

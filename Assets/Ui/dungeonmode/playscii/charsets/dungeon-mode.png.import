@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cns8aj6lgj5ed"
-path="res://.godot/imported/urizen_tileset.png-ce1a86c171d17b414a1cb58d9531be99.ctex"
+uid="uid://0am23b1mdqoc"
+path="res://.godot/imported/dungeon-mode.png-614bf37e26b35e93fc35b401ca2f280e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/urizen_tileset.png"
-dest_files=["res://.godot/imported/urizen_tileset.png-ce1a86c171d17b414a1cb58d9531be99.ctex"]
+source_file="res://Assets/Ui/dungeonmode/playscii/charsets/dungeon-mode.png"
+dest_files=["res://.godot/imported/dungeon-mode.png-614bf37e26b35e93fc35b401ca2f280e.ctex"]
 
 [params]
 
