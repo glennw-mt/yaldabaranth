@@ -21,7 +21,7 @@ public partial class World : Node2D
   {
     font = ThemeDB.FallbackFont;
     camera = new Camera2D();
-    menu = new Menu(font) { Visible = false };
+    menu = new Menu(this, font) { Visible = false };
     camera.AddChild(menu);
     AddChild(camera);
     Random rnd = new();
@@ -53,10 +53,10 @@ public partial class World : Node2D
   }
   public override void _Draw()
   {
+    S.Display(this);
     switch (gameState)
     {
       case GameState.Running:
-        S.Display(this);
         break;
       case GameState.Menu:
         S.DisplayMenu(this);
