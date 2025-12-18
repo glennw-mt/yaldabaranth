@@ -1,53 +1,38 @@
 using Godot;
 using Friflo.Engine.ECS;
-using Yaldabaranth.Scripts.ECS.Component;
 using System;
 using GoRogue.MapViews;
 using GoRogue;
+using Yaldabaranth.Scripts.ECS.Entity;
 
 public partial class World : Node2D
 {
   public EntityStore entities;
   public Tileset tileset;
   private Font _defaultFont = ThemeDB.FallbackFont;
-  public ArrayMap2D<bool> visibilityMap;
+  public ArrayMap2D<bool> collisionMap;
   public FOV fov;
+  public Camera2D camera;
   public override void _Ready()
   {
-    visibilityMap = new(200, 200);
-    fov = new FOV(visibilityMap);
+    camera = new Camera2D();
+    AddChild(camera);
     Random rnd = new();
     entities = new EntityStore();
     tileset = new Tileset("res://assets/urizen_tileset.png");
-    entities.CreateEntity(
-        new C.Position(10, 10),
-        new C.Velocity(new Vector2I(0, 0)),
-        new C.Player(),
-        new C.Visible(),
-        new C.Display(T: Tile.Man, C: Color.Color8(255, 255, 255))
-    );
-    for (int x = -100; x < 100; x++)
+    E.SpawnPlayer(this, 10, 10);
+    for (int x = -100; x < 100; x++) for (int y = -100; y < 100; y++)
     {
-      for (int y = -100; y < 100; y++)
-      {
-        if (rnd.Next(0, 100) < 80)
-        {
-          continue;
-        }
-        entities.CreateEntity(
-          new C.Position(x, y),
-          new C.Velocity(new Vector2I(0, 0)),
-          new C.Visible(),
-          new C.Display(T: Tile.Tree, C: Color.Color8(255, 0, 0))
-        );
-      }
+      if (rnd.Next(0, 100) < 80) continue;
+      E.SpawnTree(this, x, y);
     }
   }
   public override void _Process(double delta)
   {
-    S.Sync(this);
+    S.See(this);
     S.Control(this);
-    S.Movement(this);
+    S.MoveEntities(this);
+    S.MoveCamera(this, (float)delta);
     QueueRedraw();
   }
   public override void _Draw()
