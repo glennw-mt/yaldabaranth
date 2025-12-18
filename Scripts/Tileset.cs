@@ -11,7 +11,7 @@ public class Tileset
   readonly Image image;
   public readonly int tile_size = 12;
   public readonly int scale = 4;
-  Dictionary<Tile, ImageTexture> cache = new();
+  readonly Dictionary<Tile, ImageTexture> cache = [];
   public Tileset(string path)
   {
     image = GD.Load<CompressedTexture2D>(path).GetImage();

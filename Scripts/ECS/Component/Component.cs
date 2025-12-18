@@ -12,6 +12,7 @@ public static class C
   public record struct Velocity(Vector2I V) : IComponent;
   public record struct Display(Tile T, Color C) : IComponent;
   public record struct Player : IComponent;
+  public record struct Visible : IComponent;
+  public record struct Opaque : IComponent;
 }
-
 
