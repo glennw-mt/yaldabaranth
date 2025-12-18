@@ -1,7 +1,7 @@
 # Godot 4+ specific ignores
 .godot/
-/android/
-/rustext/target
-/rustext/Cargo.lock
-/exports
-/ecs.db
+android/
+rustext/target
+rustext/Cargo.lock
+exports
+ecs.db

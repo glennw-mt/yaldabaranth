@@ -1,3 +1,6 @@
-[gd_scene format=3 uid="uid://feujudncdqla"]
+[gd_scene load_steps=2 format=3 uid="uid://feujudncdqla"]
 
-[node name="Game" type="Game"]
+[ext_resource type="Script" uid="uid://cqsvdykscuvf5" path="res://scripts/World.cs" id="1_f3sb7"]
+
+[node name="World" type="Node2D"]
+script = ExtResource("1_f3sb7")

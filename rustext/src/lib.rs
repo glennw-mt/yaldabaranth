@@ -15,7 +15,7 @@ unsafe impl ExtensionLibrary for RustExt {}
 
 #[derive(GodotClass)]
 #[class(base=Node2D)]
-struct Game {
+pub struct Game {
     base: Base<Node2D>,
     tileset: Tileset,
     camera: Gd<Camera2D>,
@@ -55,4 +55,5 @@ impl INode2D for Game {
         sync_sprite_positions(self);
         despawn_far_entities(self);
     }
+    fn draw(&mut self) {}
 }

@@ -12,13 +12,26 @@ config_version=5
 
 config/name="Yaldabaranth"
 run/main_scene="uid://feujudncdqla"
-config/features=PackedStringArray("4.5", "Mobile")
+config/features=PackedStringArray("4.5", "C#", "Mobile")
 
 [display]
 
 window/size/viewport_width=1600
 window/size/viewport_height=900
 window/stretch/mode="viewport"
+
+[dotnet]
+
+project/assembly_name="Yaldabaranth"
+
+[file_customization]
+
+folder_colors={
+"res://Scripts/": "red",
+"res://assets/": "green",
+"res://rustext/": "orange",
+"res://scripts/": "red"
+}
 
 [rendering]
 
