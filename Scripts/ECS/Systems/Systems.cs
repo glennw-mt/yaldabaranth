@@ -1,38 +1,23 @@
-using Yaldabaranth.Scripts.ECS.Component;
+using Yaldabaranth.Scripts.ECS.Components;
 using Friflo.Engine.ECS;
 using Godot;
 using GoRogue;
-using System.Collections.Generic;
-using System.Linq;
-using Yaldabaranth.Scripts.ECS.Tag;
-
+using Yaldabaranth.Scripts.ECS.Tags;
+using Yaldabaranth.Scripts;
 
 public partial class S
 {
   public static void See(World world)
   {
-    var query = world.entities.Query<C.Position, C.Eyes>();
-    var eyes_pos_list = new List<(C.Eyes, C.Position)>();
-    query.ForEachEntity((ref C.Position p, ref C.Eyes eyes, Entity _) =>
+    var eyesQ = world.entities.Query<C.Position, C.Eyes>();
+    var visibleQ = world.entities.Query<C.Position>().AllTags(Tags.Get<T.Visible>());
+    eyesQ.ForEachEntity((ref C.Position p, ref C.Eyes eyes, Entity _) => eyes.Reset());
+    visibleQ.ForEachEntity((ref C.Position pv, Entity _) =>
     {
-      eyes.Reset();
-      eyes_pos_list.Append((eyes, p));
+      var pvCoord = new Coord(pv.V.X + 100, pv.V.Y + 100);
+      eyesQ.ForEachEntity((ref C.Position pe, ref C.Eyes eyes, Entity _) => eyes.visMap[pvCoord] = false);
     });
-    var visible_query = world.entities.Query<C.Position>().AllTags(Tags.Get<T.Visible>());
-    visible_query.ForEachEntity((ref C.Position pv, Entity _) =>
-    {
-      foreach ((C.Eyes, C.Position) eyes_pos in eyes_pos_list)
-      {
-        var eyes = eyes_pos.Item1;
-        var pos = eyes_pos.Item2;
-        var visibilityCoord = new Coord(pos.V.X + 100, pos.V.Y + 100);
-        eyes.visibilityMap[visibilityCoord] = false;
-      }
-    });
-    query.ForEachEntity((ref C.Position p, ref C.Eyes eyes, Entity _) =>
-    {
-      eyes.fov.Calculate(new Coord(p.V.X + 100, p.V.Y + 100), radius: 5);
-    });
+    eyesQ.ForEachEntity((ref C.Position pos, ref C.Eyes eyes, Entity _) => eyes.UpdateFOV(pos));
   }
   public static void Display(World world)
   {
@@ -60,10 +45,6 @@ public partial class S
   {
 
   }
-  public static void DisplayPaused(World world)
-  {
-    Display(world);
-  }
   public static void Control(World world)
   {
     var query = world.entities.Query<C.Velocity, C.Player>();
@@ -86,6 +67,36 @@ public partial class S
     {
       world.gameState = GameState.Running;
       world.menu.Visible = false;
+    }
+    if (Input.IsActionJustPressed("ui_left"))
+    {
+      switch (world.menu.menuState)
+      {
+        case MenuState.Character:
+          world.menu.menuState = MenuState.System;
+          break;
+        case MenuState.Map:
+          world.menu.menuState = MenuState.Character;
+          break;
+        case MenuState.System:
+          world.menu.menuState = MenuState.Map;
+          break;
+      }
+    }
+    else if (Input.IsActionJustPressed("ui_right"))
+    {
+      switch (world.menu.menuState)
+      {
+        case MenuState.Character:
+          world.menu.menuState = MenuState.Map;
+          break;
+        case MenuState.Map:
+          world.menu.menuState = MenuState.System;
+          break;
+        case MenuState.System:
+          world.menu.menuState = MenuState.Character;
+          break;
+      }
     }
   }
   public static void MoveEntities(World world)

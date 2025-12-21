@@ -1,9 +1,9 @@
-using Yaldabaranth.Scripts.ECS.Component;
+using Yaldabaranth.Scripts.ECS.Components;
 using Godot;
 using Friflo.Engine.ECS;
-using Yaldabaranth.Scripts.ECS.Tag;
+using Yaldabaranth.Scripts.ECS.Tags;
 
-namespace Yaldabaranth.Scripts.ECS.Entity;
+namespace Yaldabaranth.Scripts.ECS.Entities;
 
 public static class E
 {

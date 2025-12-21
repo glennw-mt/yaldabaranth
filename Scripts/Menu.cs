@@ -9,7 +9,7 @@ public enum MenuState
 
 public partial class Menu(World world, Font font) : Node2D
 {
-  MenuState menuState = MenuState.Character;
+  public MenuState menuState = MenuState.Character;
   Color selectedColor = Color.Color8(255, 255, 0);
   float GetStringWidth(string text)
   {
@@ -54,41 +54,5 @@ public partial class Menu(World world, Font font) : Node2D
         fontSize: 48
     );
   }
-  public override void _Process(double delta)
-  {
-    if (world.gameState == GameState.Menu)
-    {
-      if (Input.IsActionJustPressed("ui_left"))
-      {
-        switch (menuState)
-        {
-          case MenuState.Character:
-            menuState = MenuState.System;
-            break;
-          case MenuState.Map:
-            menuState = MenuState.Character;
-            break;
-          case MenuState.System:
-            menuState = MenuState.Map;
-            break;
-        }
-      }
-      else if (Input.IsActionJustPressed("ui_right"))
-      {
-        switch (menuState)
-        {
-          case MenuState.Character:
-            menuState = MenuState.Map;
-            break;
-          case MenuState.Map:
-            menuState = MenuState.System;
-            break;
-          case MenuState.System:
-            menuState = MenuState.Character;
-            break;
-        }
-      }
-    }
-    QueueRedraw();
-  }
+  public override void _Process(double delta) => QueueRedraw();
 }

@@ -2,8 +2,10 @@ using Godot;
 using Friflo.Engine.ECS;
 using GoRogue.MapViews;
 using GoRogue;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace Yaldabaranth.Scripts.ECS.Component;
+namespace Yaldabaranth.Scripts.ECS.Components;
 
 public static class C
 {
@@ -16,11 +18,18 @@ public static class C
   public record struct Player : IComponent;
   public record struct Eyes : IComponent
   {
-    public ArrayMap2D<bool> visibilityMap = new(200, 200);
+    public ArrayMap2D<bool> visMap = new(200, 200);
     public FOV fov;
+    public List<Entity> memory;
+    public float eyeSight = 5.0f;
     public Eyes()
     {
-      fov = new FOV(visibilityMap);
+      fov = new FOV(visMap);
+    }
+    public readonly void UpdateFOV(Position pos)
+    {
+      var posCoord = new Coord(pos.V.X + 100, pos.V.Y + 100);
+      fov.Calculate(posCoord, radius: eyeSight);
     }
     public readonly void Reset()
     {
@@ -28,7 +37,7 @@ public static class C
       {
         for (int y = 0; y < 200; y++)
         {
-          visibilityMap[new Coord(x, y)] = true;
+          visMap[new Coord(x, y)] = true;
         }
       }
     }

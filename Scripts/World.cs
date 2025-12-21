@@ -1,7 +1,7 @@
 using Godot;
 using Friflo.Engine.ECS;
 using System;
-using Yaldabaranth.Scripts.ECS.Entity;
+using Yaldabaranth.Scripts.ECS.Entities;
 using Yaldabaranth.Scripts;
 
 public enum GameState
@@ -36,7 +36,6 @@ public partial class World : Node2D
   }
   public override void _Process(double delta)
   {
-    GD.Print(gameState);
     switch (gameState)
     {
       case GameState.Running:

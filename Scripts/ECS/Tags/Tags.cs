@@ -1,6 +1,6 @@
 using Friflo.Engine.ECS;
 
-namespace Yaldabaranth.Scripts.ECS.Tag;
+namespace Yaldabaranth.Scripts.ECS.Tags;
 
 public static class T
 {
