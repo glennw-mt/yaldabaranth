@@ -17,8 +17,12 @@ public partial class World : Node2D
   public Menu menu;
   public GameState gameState = GameState.Running;
   public Font font;
+  public Map map;
+  public DatabaseManager db;
   public override void _Ready()
   {
+    db = new DatabaseManager();
+    map = new Map(db);
     font = ThemeDB.FallbackFont;
     camera = new Camera2D();
     menu = new Menu(this, font) { Visible = false };
@@ -33,6 +37,7 @@ public partial class World : Node2D
       if (rnd.Next(0, 100) < 80) continue;
       E.SpawnTree(this, x, y);
     }
+    map.Generate();
   }
   public override void _Process(double delta)
   {

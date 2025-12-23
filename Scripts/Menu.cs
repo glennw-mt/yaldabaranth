@@ -53,6 +53,10 @@ public partial class Menu(World world, Font font) : Node2D
         modulate: Color.Color8(255, 255, 255),
         fontSize: 48
     );
+    if (menuState == MenuState.Map)
+    {
+      world.map.DebugBlit(this);
+    }
   }
   public override void _Process(double delta) => QueueRedraw();
 }

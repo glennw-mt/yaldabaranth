@@ -2,8 +2,6 @@ using Godot;
 using Friflo.Engine.ECS;
 using GoRogue.MapViews;
 using GoRogue;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Yaldabaranth.Scripts.ECS.Components;
 
@@ -16,11 +14,11 @@ public static class C
   public record struct Velocity(Vector2I V) : IComponent;
   public record struct Display(Tile T, Color C) : IComponent;
   public record struct Player : IComponent;
+  public record struct Memory : IComponent;
   public record struct Eyes : IComponent
   {
     public ArrayMap2D<bool> visMap = new(200, 200);
     public FOV fov;
-    public List<Entity> memory;
     public float eyeSight = 5.0f;
     public Eyes()
     {
@@ -33,13 +31,8 @@ public static class C
     }
     public readonly void Reset()
     {
-      for (int x = 0; x < 200; x++)
-      {
-        for (int y = 0; y < 200; y++)
-        {
-          visMap[new Coord(x, y)] = true;
-        }
-      }
+      for (int x = 0; x < 200; x++) for (int y = 0; y < 200; y++)
+        visMap[new Coord(x, y)] = true;
     }
   }
 }

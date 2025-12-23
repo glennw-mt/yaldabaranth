@@ -5,3 +5,4 @@ rustext/target
 rustext/Cargo.lock
 exports
 ecs.db
+map.db
