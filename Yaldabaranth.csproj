@@ -6,7 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Friflo.Engine.ECS" Version="3.4.2" />
-    <PackageReference Include="GoRogue" Version="2.6.4" />
+    <PackageReference Include="GoRogue" Version="3.0.0-beta08" />
     <PackageReference Include="LiteDB" Version="5.0.21" />
   </ItemGroup>
 </Project>

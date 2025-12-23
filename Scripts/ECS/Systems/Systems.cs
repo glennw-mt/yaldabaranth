@@ -1,9 +1,9 @@
 using Yaldabaranth.Scripts.ECS.Components;
 using Friflo.Engine.ECS;
 using Godot;
-using GoRogue;
 using Yaldabaranth.Scripts.ECS.Tags;
 using Yaldabaranth.Scripts;
+using SadRogue.Primitives;
 
 public partial class S
 {
@@ -14,7 +14,7 @@ public partial class S
     eyesQ.ForEachEntity((ref C.Position p, ref C.Eyes eyes, Entity _) => eyes.Reset());
     visibleQ.ForEachEntity((ref C.Position pv, Entity _) =>
     {
-      var pvCoord = new Coord(pv.V.X + 100, pv.V.Y + 100);
+      var pvCoord = new Point(pv.V.X + 100, pv.V.Y + 100);
       eyesQ.ForEachEntity((ref C.Position pe, ref C.Eyes eyes, Entity _) => eyes.visMap[pvCoord] = false);
     });
     eyesQ.ForEachEntity((ref C.Position pos, ref C.Eyes eyes, Entity _) => eyes.UpdateFOV(pos));
@@ -30,10 +30,10 @@ public partial class S
     {
       var tile = world.tileset.GetTile(d.T);
       var gp = p.V * scaleFactor;
-      var color = Color.Color8(100, 100, 100);
+      var color = Godot.Color.Color8(100, 100, 100);
       if (e.Tags.HasAll(Tags.Get<T.Visible>()))
       {
-        if (player_eyes.fov.BooleanFOV[p.V.X + 100, p.V.Y + 100])
+        if (player_eyes.fov.BooleanResultView[p.V.X + 100, p.V.Y + 100])
         {
           color = d.C;
         }
