@@ -48,51 +48,42 @@ public class Map(DatabaseManager db)
     var generator = new Generator(512, 128);
     generator.ConfigAndGenerateSafe(gen =>
     {
-      gen.AddSteps(DefaultAlgorithms.DungeonMazeMapSteps());
+      gen.AddSteps(DefaultAlgorithms.DungeonMazeMapSteps(maxRooms: 1000));
     });
     var wallFloorValues = generator.Context.GetFirst<ISettableGridView<bool>>("WallFloor");
     foreach (Point pos in wallFloorValues.Positions())
-      if (wallFloorValues[pos])
-        Console.WriteLine($"{pos} is a floor.");
-      else
-        Console.WriteLine($"{pos} is a wall.");
+      if (wallFloorValues[pos]) Console.WriteLine($"{pos} is a floor.");
+      else Console.WriteLine($"{pos} is a wall.");
     biomeMap = [];
-    for (int x = 0; x < 512; x++)
+    for (int x = 0; x < 512; x++) for (int y = 0; y < 128; y++)
     {
-      for (int y = 0; y < 128; y++)
-      {
-        var biomes = Enum.GetValues<Biome>();
-        var pos = new Vector2I(x, y);
-        // biomeMap[pos] = biomes[Random.Shared.Next(biomes.Length)];
-        biomeMap[pos] = wallFloorValues[new Point(pos.X, pos.Y)] ? Biome.Desert : Biome.Ocean;
-      }
+      var biomes = Enum.GetValues<Biome>();
+      var pos = new Vector2I(x, y);
+      biomeMap[pos] = wallFloorValues[new Point(pos.X, pos.Y)] ? Biome.Desert : Biome.Ocean;
     }
   }
   public void DebugBlit(Node2D canvas)
   {
-    for (int x = 0; x < 512; x++)
+    for (int x = 0; x < 512; x++) for (int y = 0; y < 128; y++)
     {
-      for (int y = 0; y < 128; y++)
+      Godot.Color map_pixel = new();
+      var pos = new Vector2I(x, y);
+      switch (biomeMap[pos])
       {
-        Godot.Color map_pixel = new();
-        var pos = new Vector2I(x, y);
-        switch (biomeMap[pos])
-        {
-          case Biome.Forest:
-            map_pixel = Godot.Color.Color8(0, 255, 0);
-            break;
-          case Biome.Desert:
-            map_pixel = Godot.Color.Color8(255, 255, 100);
-            break;
-          case Biome.Ocean:
-            map_pixel = Godot.Color.Color8(0, 0, 255);
-            break;
-          case Biome.Mountain:
-            map_pixel = Godot.Color.Color8(255, 255, 255);
-            break;
-        }
-        canvas.DrawRect(new Rect2(pos * 2, new Vector2(2, 2)), map_pixel);
+        case Biome.Forest:
+          map_pixel = Godot.Color.Color8(0, 255, 0);
+          break;
+        case Biome.Desert:
+          map_pixel = Godot.Color.Color8(255, 255, 100);
+          break;
+        case Biome.Ocean:
+          map_pixel = Godot.Color.Color8(0, 0, 255);
+          break;
+        case Biome.Mountain:
+          map_pixel = Godot.Color.Color8(255, 255, 255);
+          break;
       }
+      canvas.DrawRect(new Rect2(pos * 2, new Vector2(2, 2)), map_pixel);
     }
   }
 }

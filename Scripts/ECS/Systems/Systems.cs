@@ -41,10 +41,6 @@ public partial class S
       world.DrawTexture(tile, gp, color);
     });
   }
-  public static void DisplayMenu(World world)
-  {
-
-  }
   public static void Control(World world)
   {
     var query = world.entities.Query<C.Velocity, C.Player>();
@@ -54,7 +50,7 @@ public partial class S
       if (Input.IsActionJustPressed("ui_down")) v.V += Vector2I.Down;
       if (Input.IsActionJustPressed("ui_left")) v.V += Vector2I.Left;
       if (Input.IsActionJustPressed("ui_right")) v.V += Vector2I.Right;
-      if (Input.IsActionJustPressed("menu"))
+      if (Input.IsActionJustPressed("ui_cancel"))
       {
         world.gameState = GameState.Menu;
         world.menu.Visible = true;
@@ -63,39 +59,52 @@ public partial class S
   }
   public static void ControlMenu(World world)
   {
-    if (Input.IsActionJustPressed("menu"))
+    if (Input.IsActionJustPressed("ui_cancel"))
     {
-      world.gameState = GameState.Running;
-      world.menu.Visible = false;
-    }
-    if (Input.IsActionJustPressed("ui_left"))
-    {
-      switch (world.menu.menuState)
+      if (world.menu.activeMenuState == SelectedMenuState.None)
       {
-        case MenuState.Character:
-          world.menu.menuState = MenuState.System;
-          break;
-        case MenuState.Map:
-          world.menu.menuState = MenuState.Character;
-          break;
-        case MenuState.System:
-          world.menu.menuState = MenuState.Map;
-          break;
+        world.gameState = GameState.Running;
+        world.menu.Visible = false;
+      }
+      else world.menu.activeMenuState = SelectedMenuState.None;
+    }
+    if (world.menu.activeMenuState == SelectedMenuState.None)
+    {
+      if (Input.IsActionJustPressed("ui_left"))
+      {
+        switch (world.menu.selectedMenuState)
+        {
+          case SelectedMenuState.Character:
+            world.menu.selectedMenuState = SelectedMenuState.System; break;
+          case SelectedMenuState.Map:
+            world.menu.selectedMenuState = SelectedMenuState.Character; break;
+          case SelectedMenuState.System:
+            world.menu.selectedMenuState = SelectedMenuState.Map; break;
+        }
+      }
+      else if (Input.IsActionJustPressed("ui_right"))
+      {
+        switch (world.menu.selectedMenuState)
+        {
+          case SelectedMenuState.Character:
+            world.menu.selectedMenuState = SelectedMenuState.Map; break;
+          case SelectedMenuState.Map:
+            world.menu.selectedMenuState = SelectedMenuState.System; break;
+          case SelectedMenuState.System:
+            world.menu.selectedMenuState = SelectedMenuState.Character; break;
+        }
       }
     }
-    else if (Input.IsActionJustPressed("ui_right"))
+    if (Input.IsActionJustPressed("ui_accept"))
     {
-      switch (world.menu.menuState)
+      switch (world.menu.selectedMenuState)
       {
-        case MenuState.Character:
-          world.menu.menuState = MenuState.Map;
-          break;
-        case MenuState.Map:
-          world.menu.menuState = MenuState.System;
-          break;
-        case MenuState.System:
-          world.menu.menuState = MenuState.Character;
-          break;
+        case SelectedMenuState.Character:
+          world.menu.activeMenuState = SelectedMenuState.Character; break;
+        case SelectedMenuState.Map:
+          world.menu.activeMenuState = SelectedMenuState.Map; break;
+        case SelectedMenuState.System:
+          world.menu.activeMenuState = SelectedMenuState.System; break;
       }
     }
   }

@@ -55,16 +55,5 @@ public partial class World : Node2D
     }
     QueueRedraw();
   }
-  public override void _Draw()
-  {
-    S.Display(this);
-    switch (gameState)
-    {
-      case GameState.Running:
-        break;
-      case GameState.Menu:
-        S.DisplayMenu(this);
-        break;
-    }
-  }
+  public override void _Draw() => S.Display(this);
 }
