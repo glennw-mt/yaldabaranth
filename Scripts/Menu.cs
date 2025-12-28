@@ -13,6 +13,9 @@ public partial class Menu(World world, Font font) : Node2D
   public override void _Draw()
   {
     DrawRect(new Rect2(position: new Vector2(-4000, -4000), size: new Vector2(8000, 8000)), Color.Color8(0, 0, 0, 100));
+    if (selectedMenuState == SelectedMenuState.Map) world.map.DebugBlit(this);
+    if (activeMenuState == SelectedMenuState.None)
+      DrawRect(new Rect2(position: new Vector2(-4000, -4000), size: new Vector2(8000, 8000)), Color.Color8(0, 0, 0, 100));
     Vector2 viewSize = GetViewportRect().Size;
     Vector2 topLeft = -viewSize / 2;
     Vector2 topRight = topLeft + Vector2.Right * viewSize.X;
@@ -30,7 +33,6 @@ public partial class Menu(World world, Font font) : Node2D
     DrawMenuOption("Character", topLeft + midOff + Vector2.Right * (sixthWidth / 4), SelectedMenuState.Character);
     DrawMenuOption("Map", topLeft + midOff + Vector2.Right * (viewSize.X / 2) + Vector2.Left * (GetStringWidth("MAP") / 2), SelectedMenuState.Map);
     DrawMenuOption("System", topRight + midOff + Vector2.Left * (GetStringWidth("SYSTEM") + sixthWidth / 4), SelectedMenuState.System);
-    if (selectedMenuState == SelectedMenuState.Map) world.map.DebugBlit(this);
   }
   public override void _Process(double delta) => QueueRedraw();
 }

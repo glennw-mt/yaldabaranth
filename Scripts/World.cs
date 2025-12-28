@@ -19,25 +19,27 @@ public partial class World : Node2D
   public Font font;
   public Map map;
   public DatabaseManager db;
+  public int seed;
   public override void _Ready()
   {
     db = new DatabaseManager();
-    map = new Map(db);
+    map = new Map(this);
     font = ThemeDB.FallbackFont;
     camera = new Camera2D();
     menu = new Menu(this, font) { Visible = false };
     camera.AddChild(menu);
+    seed = 42;
+    Random rnd = new(seed);
     AddChild(camera);
-    Random rnd = new();
     entities = new EntityStore();
     tileset = new Tileset("res://Assets/urizen_tileset.png");
-    E.SpawnPlayer(this, 10, 10);
-    for (int x = -100; x < 100; x++) for (int y = -100; y < 100; y++)
+    E.SpawnPlayer(this, 10 + map.regionSize.X * 3, 10 + map.regionSize.Y * 3);
+    for (int x = 0; x < 100; x++) for (int y = 0; y < 100; y++)
     {
       if (rnd.Next(0, 100) < 80) continue;
-      E.SpawnTree(this, x, y);
+      E.SpawnTree(this, x + map.regionSize.X * 3, y + map.regionSize.Y * 3);
     }
-    map.Generate();
+    map.GenerateGlobe();
   }
   public override void _Process(double delta)
   {
@@ -49,9 +51,7 @@ public partial class World : Node2D
         S.MoveEntities(this);
         S.MoveCamera(this, (float)delta);
         break;
-      case GameState.Menu:
-        S.ControlMenu(this);
-        break;
+      case GameState.Menu: S.ControlMenu(this); break;
     }
     QueueRedraw();
   }

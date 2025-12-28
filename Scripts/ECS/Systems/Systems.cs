@@ -9,15 +9,15 @@ public partial class S
 {
   public static void See(World world)
   {
-    var eyesQ = world.entities.Query<C.Position, C.Eyes>();
-    var visibleQ = world.entities.Query<C.Position>().AllTags(Tags.Get<T.Visible>());
-    eyesQ.ForEachEntity((ref C.Position p, ref C.Eyes eyes, Entity _) => eyes.Reset());
-    visibleQ.ForEachEntity((ref C.Position pv, Entity _) =>
+    var eyesQuery = world.entities.Query<C.Position, C.Eyes>();
+    var visibleQuery = world.entities.Query<C.Position>().AllTags(Tags.Get<T.Visible>());
+    eyesQuery.ForEachEntity((ref C.Position p, ref C.Eyes eyes, Entity _) => eyes.Reset());
+    visibleQuery.ForEachEntity((ref C.Position pv, Entity _) =>
     {
-      var pvCoord = new Point(pv.V.X + 100, pv.V.Y + 100);
-      eyesQ.ForEachEntity((ref C.Position pe, ref C.Eyes eyes, Entity _) => eyes.visMap[pvCoord] = false);
+      var pvCoord = new Point(pv.R.X, pv.R.Y);
+      eyesQuery.ForEachEntity((ref C.Position pe, ref C.Eyes eyes, Entity _) => eyes.visMap[pvCoord] = false);
     });
-    eyesQ.ForEachEntity((ref C.Position pos, ref C.Eyes eyes, Entity _) => eyes.UpdateFOV(pos));
+    eyesQuery.ForEachEntity((ref C.Position pos, ref C.Eyes eyes, Entity _) => eyes.UpdateFOV(pos));
   }
   public static void Display(World world)
   {
@@ -29,14 +29,11 @@ public partial class S
     query.ForEachEntity((ref C.Position p, ref C.Display d, Entity e) =>
     {
       var tile = world.tileset.GetTile(d.T);
-      var gp = p.V * scaleFactor;
+      var gp = p.A * scaleFactor;
       var color = Godot.Color.Color8(100, 100, 100);
       if (e.Tags.HasAll(Tags.Get<T.Visible>()))
       {
-        if (player_eyes.fov.BooleanResultView[p.V.X + 100, p.V.Y + 100])
-        {
-          color = d.C;
-        }
+        if (player_eyes.fov.BooleanResultView[p.R.X, p.R.Y]) color = d.C;
       }
       world.DrawTexture(tile, gp, color);
     });
@@ -113,14 +110,14 @@ public partial class S
     var query = world.entities.Query<C.Position, C.Velocity>();
     query.ForEachEntity((ref C.Position p, ref C.Velocity v, Entity e) =>
     {
-      p.V += v.V;
+      p.Move(v.V);
       v.V = Vector2I.Zero;
     });
   }
   public static void MoveCamera(World world, float delta)
   {
     var player_pos = world.entities.Query<C.Position, C.Player>().ToEntityList()[0].GetComponent<C.Position>();
-    var player_canvas_pos = player_pos.V * world.tileset.scale * world.tileset.tile_size;
+    var player_canvas_pos = player_pos.A * world.tileset.scale * world.tileset.tile_size;
     world.camera.Translate((player_canvas_pos - world.camera.Position) * delta * 4);
   }
 }
