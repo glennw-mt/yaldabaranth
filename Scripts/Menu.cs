@@ -2,20 +2,20 @@ using Godot;
 
 namespace Yaldabaranth.Scripts;
 
-public enum SelectedMenuState { None = 0, Character = 1, Map = 2, System = 3 }
+public enum MenuState { None = 0, Character = 1, Map = 2, System = 3 }
 
 public partial class Menu(World world, Font font) : Node2D
 {
-  public SelectedMenuState selectedMenuState = SelectedMenuState.Character;
-  public SelectedMenuState activeMenuState = SelectedMenuState.None;
+  public MenuState selectedMenuState = MenuState.Character;
+  public MenuState activeMenuState = MenuState.None;
   Color selectedColor = Color.Color8(255, 255, 0);
   float GetStringWidth(string text) => font.GetStringSize(text, fontSize: 48).X;
   public override void _Draw()
   {
     DrawRect(new Rect2(position: new Vector2(-4000, -4000), size: new Vector2(8000, 8000)), Color.Color8(0, 0, 0, 100));
-    if (selectedMenuState == SelectedMenuState.Map) world.map.DebugBlit(this);
-    if (activeMenuState == SelectedMenuState.None)
+    if (activeMenuState != MenuState.None)
       DrawRect(new Rect2(position: new Vector2(-4000, -4000), size: new Vector2(8000, 8000)), Color.Color8(0, 0, 0, 100));
+    if (selectedMenuState == MenuState.Map && activeMenuState == MenuState.Map) world.map.DebugBlit(this);
     Vector2 viewSize = GetViewportRect().Size;
     Vector2 topLeft = -viewSize / 2;
     Vector2 topRight = topLeft + Vector2.Right * viewSize.X;
@@ -25,14 +25,14 @@ public partial class Menu(World world, Font font) : Node2D
     Color white = Color.Color8(255, 255, 255);
     Color red = Color.Color8(255, 0, 0);
     DrawRect(new Rect2(position: topLeft, size: new Vector2(viewSize.X, barHeight)), Color.Color8(0, 0, 0));
-    void DrawMenuOption(string text, Vector2 pos, SelectedMenuState state)
+    void DrawMenuOption(string text, Vector2 pos, MenuState state)
     {
       DrawString(font, pos, text, fontSize: 48,
           modulate: selectedMenuState == state ? activeMenuState == state ? red : selectedColor : white);
     }
-    DrawMenuOption("Character", topLeft + midOff + Vector2.Right * (sixthWidth / 4), SelectedMenuState.Character);
-    DrawMenuOption("Map", topLeft + midOff + Vector2.Right * (viewSize.X / 2) + Vector2.Left * (GetStringWidth("MAP") / 2), SelectedMenuState.Map);
-    DrawMenuOption("System", topRight + midOff + Vector2.Left * (GetStringWidth("SYSTEM") + sixthWidth / 4), SelectedMenuState.System);
+    DrawMenuOption("Character", topLeft + midOff + Vector2.Right * (sixthWidth / 4), MenuState.Character);
+    DrawMenuOption("Map", topLeft + midOff + Vector2.Right * (viewSize.X / 2) + Vector2.Left * (GetStringWidth("MAP") / 2), MenuState.Map);
+    DrawMenuOption("System", topRight + midOff + Vector2.Left * (GetStringWidth("SYSTEM") + sixthWidth / 4), MenuState.System);
   }
   public override void _Process(double delta) => QueueRedraw();
 }

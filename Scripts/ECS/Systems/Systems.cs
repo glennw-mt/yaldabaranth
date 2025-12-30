@@ -58,50 +58,78 @@ public partial class S
   {
     if (Input.IsActionJustPressed("ui_cancel"))
     {
-      if (world.menu.activeMenuState == SelectedMenuState.None)
+      if (world.menu.activeMenuState == MenuState.None)
       {
         world.gameState = GameState.Running;
         world.menu.Visible = false;
       }
-      else world.menu.activeMenuState = SelectedMenuState.None;
+      else world.menu.activeMenuState = MenuState.None;
     }
-    if (world.menu.activeMenuState == SelectedMenuState.None)
+    if (world.menu.activeMenuState == MenuState.None)
     {
       if (Input.IsActionJustPressed("ui_left"))
       {
         switch (world.menu.selectedMenuState)
         {
-          case SelectedMenuState.Character:
-            world.menu.selectedMenuState = SelectedMenuState.System; break;
-          case SelectedMenuState.Map:
-            world.menu.selectedMenuState = SelectedMenuState.Character; break;
-          case SelectedMenuState.System:
-            world.menu.selectedMenuState = SelectedMenuState.Map; break;
+          case MenuState.Character:
+            world.menu.selectedMenuState = MenuState.System; break;
+          case MenuState.Map:
+            world.menu.selectedMenuState = MenuState.Character; break;
+          case MenuState.System:
+            world.menu.selectedMenuState = MenuState.Map; break;
         }
       }
       else if (Input.IsActionJustPressed("ui_right"))
       {
         switch (world.menu.selectedMenuState)
         {
-          case SelectedMenuState.Character:
-            world.menu.selectedMenuState = SelectedMenuState.Map; break;
-          case SelectedMenuState.Map:
-            world.menu.selectedMenuState = SelectedMenuState.System; break;
-          case SelectedMenuState.System:
-            world.menu.selectedMenuState = SelectedMenuState.Character; break;
+          case MenuState.Character:
+            world.menu.selectedMenuState = MenuState.Map; break;
+          case MenuState.Map:
+            world.menu.selectedMenuState = MenuState.System; break;
+          case MenuState.System:
+            world.menu.selectedMenuState = MenuState.Character; break;
         }
       }
     }
-    if (Input.IsActionJustPressed("ui_accept"))
+    else if (world.menu.activeMenuState == MenuState.Map)
+    {
+      if (Input.IsActionPressed("ui_left"))
+      {
+        world.map.mapViewOffset.X += world.map.mapViewZoom;
+      }
+      else if (Input.IsActionPressed("ui_right"))
+      {
+        world.map.mapViewOffset.X -= world.map.mapViewZoom;
+      }
+      if (Input.IsActionPressed("ui_up"))
+      {
+        world.map.mapViewOffset.Y += world.map.mapViewZoom;
+      }
+      else if (Input.IsActionPressed("ui_down"))
+      {
+        world.map.mapViewOffset.Y -= world.map.mapViewZoom;
+      }
+      if (Input.IsActionJustPressed("zoom_in"))
+      {
+        world.map.mapViewZoom += 1;
+      }
+      else if (Input.IsActionJustPressed("zoom_out"))
+      {
+        world.map.mapViewZoom -= 1;
+        if (world.map.mapViewZoom <= 0) world.map.mapViewZoom = 1;
+      }
+    }
+    if (Input.IsActionPressed("ui_accept"))
     {
       switch (world.menu.selectedMenuState)
       {
-        case SelectedMenuState.Character:
-          world.menu.activeMenuState = SelectedMenuState.Character; break;
-        case SelectedMenuState.Map:
-          world.menu.activeMenuState = SelectedMenuState.Map; break;
-        case SelectedMenuState.System:
-          world.menu.activeMenuState = SelectedMenuState.System; break;
+        case MenuState.Character:
+          world.menu.activeMenuState = MenuState.Character; break;
+        case MenuState.Map:
+          world.menu.activeMenuState = MenuState.Map; break;
+        case MenuState.System:
+          world.menu.activeMenuState = MenuState.System; break;
       }
     }
   }

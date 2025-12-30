@@ -39,7 +39,8 @@ public class Map(World world)
 {
   readonly World world = world;
   public Dictionary<Vector2I, Biome> biomeMap;
-  Vector2I mapViewOffset = new(0, 0);
+  public Vector2 mapViewOffset = new(0, 0);
+  public float mapViewZoom = 1.0f;
   public Vector2I mapSize = new(512, 256);
   public Vector2I sectorSize = new(3, 3);
   public Vector2I regionSize = new(128, 128);
@@ -75,7 +76,7 @@ public class Map(World world)
         case Biome.Ocean: map_pixel = Godot.Color.Color8(0, 0, 255); break;
         case Biome.Mountain: map_pixel = Godot.Color.Color8(255, 255, 255); break;
       }
-      canvas.DrawRect(new Rect2(pos - mapSize / 2 + mapViewOffset, new Vector2(1, 1)), map_pixel);
+      canvas.DrawRect(new Rect2(((Vector2)pos - mapSize / 2 + mapViewOffset) * mapViewZoom, new Vector2(mapViewZoom, mapViewZoom)), map_pixel);
     }
   }
 }
