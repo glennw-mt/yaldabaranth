@@ -1,17 +1,15 @@
-using GoRogue.MapGeneration;
 using Friflo.Engine.ECS;
 using System.Collections.Generic;
-using System;
 using SadRogue.Primitives.GridViews;
 using Microsoft.Xna.Framework;
-using MonoGame.Extended;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 
-namespace Yaldabaranth.Core.Scripts;
+namespace Yaldabaranth.Core.Scripts.Map;
 
 public enum Biome
 {
-  Forest, Desert, Ocean, Mountain
+  Forest, Ocean, Mountain
 }
 
 public class Region(Vector2 size) : IGridView<Entity>
@@ -38,49 +36,26 @@ public class Sector(Vector2 size) : IGridView<Region>
 
 public class Map(YaldabaranthGame game)
 {
-  readonly YaldabaranthGame game = game;
+  public readonly YaldabaranthGame game = game;
   Texture2D mapTexture;
   public Dictionary<Vector2, Biome> BiomeMap;
   public Vector2 MapViewOffset = new(0, 0);
-  public int MapViewZoom = 1;
+  public int MapViewZoom = 2;
   public Vector2 MapSize = new(512, 256);
   public Vector2 SectorSize = new(3, 3);
   public Vector2 RegionSize = new(128, 128);
   public void GenerateGlobe()
   {
-    var generator = new Generator((int)MapSize.X, (int)MapSize.Y);
-    generator.ConfigAndGenerateSafe(gen =>
-    {
-      gen.AddSteps(DefaultAlgorithms.DungeonMazeMapSteps(maxRooms: 500));
-    });
-    var wallFloorValues = generator.Context.GetFirst<ISettableGridView<bool>>("WallFloor");
-    foreach (SadRogue.Primitives.Point pos in wallFloorValues.Positions())
-      if (wallFloorValues[pos]) Console.WriteLine($"{pos} is a floor.");
-      else Console.WriteLine($"{pos} is a wall.");
-    BiomeMap = [];
-    for (int x = 0; x < MapSize.X; x++) for (int y = 0; y < MapSize.Y; y++)
-    {
-      var biomes = Enum.GetValues<Biome>();
-      var pos = new Vector2(x, y);
-      BiomeMap[pos] = wallFloorValues[new SadRogue.Primitives.Point((int)pos.X, (int)pos.Y)] ? Biome.Ocean : Biome.Desert;
-    }
+    Random rnd = new();
+    var seed = rnd.Next();
+    var lowNoise = Generation.NoisePixels(seed, 0.002f, (int)MapSize.X, (int)MapSize.Y);
+    var medNoise = Generation.NoisePixels(seed ^ 2, 0.02f, (int)MapSize.X, (int)MapSize.Y);
+    var highNoise = Generation.NoisePixels(seed ^ 3, 0.2f, (int)MapSize.X, (int)MapSize.Y);
+    var averageNoise = Generation.AveragePixels(lowNoise, medNoise, 1f, 0.25f);
+    averageNoise = Generation.AveragePixels(averageNoise, highNoise, 1f, 0.05f);
+    var biomePixels = Generation.PixelsToBiomes(averageNoise);
     mapTexture = new Texture2D(game.GraphicsDevice, (int)MapSize.X, (int)MapSize.Y);
-    Color[] colorData = new Color[(int)(MapSize.X * MapSize.Y)];
-    for (int i = 0; i < colorData.Length; i++)
-    {
-      int x = i % (int)MapSize.X;
-      int y = i / (int)MapSize.X;
-      var biome = BiomeMap[new Vector2(x, y)];
-      colorData[i] = biome switch
-      {
-        Biome.Forest => Color.Green,
-        Biome.Desert => Color.Yellow,
-        Biome.Ocean => Color.Blue,
-        Biome.Mountain => Color.White,
-        _ => Color.Black
-      };
-    }
-    mapTexture.SetData(colorData);
+    mapTexture.SetData(biomePixels);
   }
   public void DebugBlit()
   {

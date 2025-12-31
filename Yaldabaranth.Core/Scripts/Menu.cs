@@ -15,7 +15,7 @@ public partial class Menu(YaldabaranthGame game)
   readonly SpriteFontBase font = game.FontSystem.GetFont(48);
   public void Draw()
   {
-    Rectangle screenRect = new Rectangle(0, 0, game.GraphicsDevice.Viewport.Width, game.GraphicsDevice.Viewport.Height);
+    Rectangle screenRect = new(0, 0, game.GraphicsDevice.Viewport.Width, game.GraphicsDevice.Viewport.Height);
     game.Canvas.FillRectangle(screenRect, new Color(0, 0, 0, 150));
 
     if (SelectedMenuState == MenuState.Map && ActiveMenuState == MenuState.Map) game.Map.DebugBlit();

@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using Yaldabaranth.Core.Scripts;
 using Yaldabaranth.Core.Scripts.ECS.Entities;
+using Yaldabaranth.Core.Scripts.Map;
 
 namespace Yaldabaranth.Core
 {
@@ -67,7 +68,6 @@ namespace Yaldabaranth.Core
       {
         S.ControlMenu(this);
       }
-      Console.WriteLine(GameState);
     }
     protected override void Draw(GameTime gameTime)
     {
