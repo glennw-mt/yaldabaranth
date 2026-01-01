@@ -41,6 +41,7 @@ public class Map(YaldabaranthGame game)
   public Vector2 MapViewOffset = new(0, 0);
   public int MapViewZoom = 2;
   public Vector2 MapSize = new(512, 256);
+  public Vector2 BiomeSize = new(3, 3);
   public Vector2 SectorSize = new(3, 3);
   public Vector2 RegionSize = new(128, 128);
   public C.Position PlayerPosition = new(game, Vector2.Zero);
@@ -60,7 +61,7 @@ public class Map(YaldabaranthGame game)
     Vector2 displaySize = MapSize * MapViewZoom;
     Vector2 mapTopLeft = screenCenter - (displaySize / 2) + (MapViewOffset * MapViewZoom);
     game.Canvas.Draw(mapTexture, mapTopLeft, null, Color.White, 0f, Vector2.Zero, MapViewZoom, SpriteEffects.None, 0f);
-    Vector2 playerScreenPos = mapTopLeft + (PlayerPosition.G * MapViewZoom);
+    Vector2 playerScreenPos = mapTopLeft + (PlayerPosition.B * MapViewZoom);
     game.Canvas.DrawRectangle(playerScreenPos, new Vector2(MapViewZoom, MapViewZoom), Color.Red, thickness: 2);
   }
 }

@@ -19,10 +19,10 @@ public static class E
     e.AddTag<T.Visible>();
     e.AddTag<T.Opaque>();
   }
-  public static void SpawnPlayer(YaldabaranthGame game, Vector2 g, Vector2 s, Vector2 r)
+  public static void SpawnPlayer(YaldabaranthGame game, Vector2 g, Vector2 s, Vector2 r, Vector2 t)
   {
     var e = game.Entities.CreateEntity(
-      new C.Position(game, g, s, r),
+      new C.Position(game, g, s, r, t),
       new C.Velocity(new Vector2(0, 0)),
       new C.Player(),
       new C.Display(Tile.Man, Color.White),

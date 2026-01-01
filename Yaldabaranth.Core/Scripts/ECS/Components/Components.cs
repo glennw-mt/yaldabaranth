@@ -12,42 +12,46 @@ public static class C
   {
     public YaldabaranthGame Game = Game;
     public Vector2 A = A;
-    public readonly Vector2 G
-    {
-      get
-      {
-        var G = A / (Game.Map.SectorSize * Game.Map.RegionSize);
-        G.Floor();
-        return G;
-      }
-    }
+    public readonly Vector2 B => Vector2.Floor(A / (Game.Map.BiomeSize * Game.Map.SectorSize * Game.Map.RegionSize));
     public readonly Vector2 S
     {
       get
       {
-        var S = A / Game.Map.RegionSize;
-        S.X %= Game.Map.SectorSize.X;
-        S.Y %= Game.Map.SectorSize.Y;
-        S.Floor();
-        return S;
+        var s = A / (Game.Map.SectorSize * Game.Map.RegionSize);
+        return new Vector2(
+            (float)Math.Floor(s.X % Game.Map.BiomeSize.X),
+            (float)Math.Floor(s.Y % Game.Map.BiomeSize.Y)
+        );
       }
     }
     public readonly Vector2 R
     {
       get
       {
-        var R = A;
-        R.X %= Game.Map.RegionSize.X;
-        R.Y %= Game.Map.RegionSize.Y;
-        R.Floor();
-        return R;
+        var r = A / Game.Map.RegionSize;
+        return new Vector2(
+            (float)Math.Floor(r.X % Game.Map.SectorSize.X),
+            (float)Math.Floor(r.Y % Game.Map.SectorSize.Y)
+        );
       }
     }
+    public readonly Vector2 T
+    {
+      get
+      {
+        return new Vector2(
+            (float)Math.Floor(A.X % Game.Map.RegionSize.X),
+            (float)Math.Floor(A.Y % Game.Map.RegionSize.Y)
+        );
+      }
+    }
+    public Position(YaldabaranthGame game, Vector2 b, Vector2 s, Vector2 r, Vector2 t)
+        : this(game,
+            (b * game.Map.BiomeSize * game.Map.SectorSize * game.Map.RegionSize) +
+            (s * game.Map.SectorSize * game.Map.RegionSize) +
+            (r * game.Map.RegionSize) + t)
+    { }
 
-    public Position(
-      YaldabaranthGame game,
-      Vector2 g, Vector2 s, Vector2 r
-    ) : this(game, (g * game.Map.SectorSize * game.Map.RegionSize) + (s * game.Map.RegionSize) + r) { }
     public void Move(Vector2 absOffset) => A += absOffset;
   }
   public record struct Velocity(Vector2 V) : IComponent;
@@ -73,8 +77,8 @@ public static class C
     }
     public readonly void Reset()
     {
-      for (int x = 0; x < game.Map.RegionSize.X * 3; x++)
-        for (int y = 0; y < game.Map.RegionSize.Y * 3; y++) VisMap[new SadRogue.Primitives.Point(x, y)] = true;
+      for (int x = 0; x < game.Map.RegionSize.X * 3; x++) for (int y = 0; y < game.Map.RegionSize.Y * 3; y++)
+        VisMap[new SadRogue.Primitives.Point(x, y)] = true;
     }
   }
   public record struct Body : IComponent;
