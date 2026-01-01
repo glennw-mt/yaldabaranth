@@ -18,7 +18,7 @@ public partial class Menu(YaldabaranthGame game)
     Rectangle screenRect = new(0, 0, game.GraphicsDevice.Viewport.Width, game.GraphicsDevice.Viewport.Height);
     game.Canvas.FillRectangle(screenRect, new Color(0, 0, 0, 150));
 
-    if (SelectedMenuState == MenuState.Map && ActiveMenuState == MenuState.Map) game.Map.DebugBlit();
+    if (SelectedMenuState == MenuState.Map && ActiveMenuState == MenuState.Map) game.Map.Blit();
     float barHeight = 64f;
     game.Canvas.FillRectangle(new Rectangle(0, 0, screenRect.Width, (int)barHeight), Color.Black);
 

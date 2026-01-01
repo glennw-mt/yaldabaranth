@@ -49,7 +49,7 @@ namespace Yaldabaranth.Core
       Camera = new(GraphicsDevice);
       Menu = new(this);
       Input = new();
-      E.SpawnPlayer(this, 10, 10);
+      E.SpawnPlayer(this, new Vector2(200, 200), Vector2.Zero, Vector2.Zero);
     }
     protected override void LoadContent()
     {

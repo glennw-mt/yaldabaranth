@@ -2,6 +2,7 @@ using Friflo.Engine.ECS;
 using SadRogue.Primitives.GridViews;
 using GoRogue.FOV;
 using Microsoft.Xna.Framework;
+using System;
 
 namespace Yaldabaranth.Core.Scripts.ECS.Components;
 
@@ -11,7 +12,15 @@ public static class C
   {
     public YaldabaranthGame Game = Game;
     public Vector2 A = A;
-    public readonly Vector2 G => A / (Game.Map.SectorSize * Game.Map.RegionSize);
+    public readonly Vector2 G
+    {
+      get
+      {
+        var G = A / (Game.Map.SectorSize * Game.Map.RegionSize);
+        G.Floor();
+        return G;
+      }
+    }
     public readonly Vector2 S
     {
       get
@@ -19,6 +28,7 @@ public static class C
         var S = A / Game.Map.RegionSize;
         S.X %= Game.Map.SectorSize.X;
         S.Y %= Game.Map.SectorSize.Y;
+        S.Floor();
         return S;
       }
     }
@@ -29,6 +39,7 @@ public static class C
         var R = A;
         R.X %= Game.Map.RegionSize.X;
         R.Y %= Game.Map.RegionSize.Y;
+        R.Floor();
         return R;
       }
     }

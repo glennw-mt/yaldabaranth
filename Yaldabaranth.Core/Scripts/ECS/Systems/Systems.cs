@@ -95,31 +95,14 @@ public partial class S
     }
     else if (game.Menu.ActiveMenuState == MenuState.Map)
     {
-      if (game.Input.IsKeyPressed(Keys.Left))
-      {
-        game.Map.MapViewOffset.X += game.Map.MapViewZoom;
-      }
-      else if (game.Input.IsKeyPressed(Keys.Right))
-      {
-        game.Map.MapViewOffset.X -= game.Map.MapViewZoom;
-      }
-      if (game.Input.IsKeyPressed(Keys.Up))
-      {
-        game.Map.MapViewOffset.Y += game.Map.MapViewZoom;
-      }
-      else if (game.Input.IsKeyPressed(Keys.Down))
-      {
-        game.Map.MapViewOffset.Y -= game.Map.MapViewZoom;
-      }
-      if (game.Input.IsKeyJustPressed(Keys.Z))
-      {
-        game.Map.MapViewZoom += 1;
-      }
-      else if (game.Input.IsKeyJustPressed(Keys.X))
-      {
-        game.Map.MapViewZoom -= 1;
-        if (game.Map.MapViewZoom <= 0) game.Map.MapViewZoom = 1;
-      }
+      if (game.Input.IsKeyPressed(Keys.Left)) game.Map.MapViewOffset.X += 1;
+      else if (game.Input.IsKeyPressed(Keys.Right)) game.Map.MapViewOffset.X -= 1;
+      if (game.Input.IsKeyPressed(Keys.Up)) game.Map.MapViewOffset.Y += 1;
+      else if (game.Input.IsKeyPressed(Keys.Down)) game.Map.MapViewOffset.Y -= 1;
+      if (game.Input.IsKeyJustPressed(Keys.Z)) game.Map.MapViewZoom *= 2;
+      else if (game.Input.IsKeyJustPressed(Keys.X)) game.Map.MapViewZoom /= 2;
+      if (game.Map.MapViewZoom <= 2) game.Map.MapViewZoom = 2;
+      if (game.Map.MapViewZoom >= 32) game.Map.MapViewZoom = 32;
     }
     if (game.Input.IsKeyPressed(Keys.Enter))
     {
@@ -141,6 +124,7 @@ public partial class S
     {
       p.Move(v.V);
       v.V = Vector2.Zero;
+      if (e.HasComponent<C.Player>()) game.Map.PlayerPosition = p;
     });
   }
   public static void MoveCamera(YaldabaranthGame game, double delta)

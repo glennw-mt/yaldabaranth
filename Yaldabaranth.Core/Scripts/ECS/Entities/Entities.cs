@@ -19,6 +19,18 @@ public static class E
     e.AddTag<T.Visible>();
     e.AddTag<T.Opaque>();
   }
+  public static void SpawnPlayer(YaldabaranthGame game, Vector2 g, Vector2 s, Vector2 r)
+  {
+    var e = game.Entities.CreateEntity(
+      new C.Position(game, g, s, r),
+      new C.Velocity(new Vector2(0, 0)),
+      new C.Player(),
+      new C.Display(Tile.Man, Color.White),
+      new C.Eyes(game)
+    );
+    e.AddTag<T.Visible>();
+    e.AddTag<T.Opaque>();
+  }
   public static void SpawnTree(YaldabaranthGame game, int x, int y)
   {
     var e = game.Entities.CreateEntity(
