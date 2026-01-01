@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 
 namespace Yaldabaranth.Core.Scripts.Map;
@@ -35,16 +36,68 @@ public static class Generation
 
     return result;
   }
+  public static Color[] RadialFalloff(Color[] pixels, int w, int h)
+  {
+    var result = new Color[w * h];
+    var cx = w / 2f;
+    var cy = h / 2f;
+    for (int y = 0; y < h; y++)
+    {
+      float ny = (y - cy) / cy;
+      for (int x = 0; x < w; x++)
+      {
+        float nx = (x - cx) / cy;
+        float d = MathF.Sqrt(nx * nx * 0.2f + ny * ny * 0.6f);
+        d = MathF.Min(d, 1f);
+        float falloff = 1f - d * d;
+        int i = y * w + x;
+        var c = pixels[i];
+        result[i] = new Color(
+            (byte)(c.R * falloff),
+            (byte)(c.G * falloff),
+            (byte)(c.B * falloff),
+            (byte)255
+        );
+      }
+    }
+    return result;
+  }
+  public static Color[] Normalize(Color[] pixels)
+  {
+    byte min = 255;
+    byte max = 0;
+    for (int i = 0; i < pixels.Length; i++)
+    {
+      byte v = pixels[i].R;
+      if (v < min) min = v;
+      if (v > max) max = v;
+    }
+    if (max == min)
+      return pixels;
+    float invRange = 1f / (max - min);
+    var result = new Color[pixels.Length];
+    for (int i = 0; i < pixels.Length; i++)
+    {
+      byte v = pixels[i].R;
+      byte n = (byte)((v - min) * invRange * 255f);
+
+      result[i] = new Color(n, n, n, pixels[i].A);
+    }
+    return result;
+  }
+
   public static Color[] PixelsToBiomes(Color[] pixels)
   {
     var result = new Color[pixels.Length];
     for (int i = 0; i < pixels.Length; i++)
     {
-      if (pixels[i].R > 210) result[i] = Color.White * (pixels[i].R / 255f);
-      else if (pixels[i].R > 175) result[i] = Color.DarkGreen * (pixels[i].R / 255f);
-      else if (pixels[i].R > 130) result[i] = Color.Green * (pixels[i].R / 255f);
-      else if (pixels[i].R > 125) result[i] = Color.Yellow * (pixels[i].R / 255f);
-      else result[i] = Color.DarkBlue * (pixels[i].R / 255f);
+      var _valAdj = (pixels[i].R / 255f);
+      var valAdj = 1f;
+      if (pixels[i].R > 210) result[i] = Color.White * valAdj;
+      else if (pixels[i].R > 175) result[i] = Color.DarkGreen * valAdj;
+      else if (pixels[i].R > 130) result[i] = Color.Green * valAdj;
+      else if (pixels[i].R > 125) result[i] = Color.Yellow * valAdj;
+      else result[i] = Color.DarkBlue * valAdj;
       result[i].A = 255;
     }
     return result;

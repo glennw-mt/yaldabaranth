@@ -48,11 +48,13 @@ public class Map(YaldabaranthGame game)
   {
     Random rnd = new();
     var seed = rnd.Next();
-    var lowNoise = Generation.NoisePixels(seed, 0.002f, (int)MapSize.X, (int)MapSize.Y);
-    var medNoise = Generation.NoisePixels(seed ^ 2, 0.02f, (int)MapSize.X, (int)MapSize.Y);
+    var lowNoise = Generation.NoisePixels(seed, 0.01f, (int)MapSize.X, (int)MapSize.Y);
+    var medNoise = Generation.NoisePixels(seed ^ 2, 0.05f, (int)MapSize.X, (int)MapSize.Y);
     var highNoise = Generation.NoisePixels(seed ^ 3, 0.2f, (int)MapSize.X, (int)MapSize.Y);
     var averageNoise = Generation.AveragePixels(lowNoise, medNoise, 1f, 0.25f);
     averageNoise = Generation.AveragePixels(averageNoise, highNoise, 1f, 0.05f);
+    averageNoise = Generation.RadialFalloff(averageNoise, (int)MapSize.X, (int)MapSize.Y);
+    averageNoise = Generation.Normalize(averageNoise);
     var biomePixels = Generation.PixelsToBiomes(averageNoise);
     mapTexture = new Texture2D(game.GraphicsDevice, (int)MapSize.X, (int)MapSize.Y);
     mapTexture.SetData(biomePixels);
