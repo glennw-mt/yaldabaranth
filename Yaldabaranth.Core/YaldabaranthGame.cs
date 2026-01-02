@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using Yaldabaranth.Core.Scripts;
+using Yaldabaranth.Core.Scripts.Cosmos;
 using Yaldabaranth.Core.Scripts.ECS.Entities;
 using Yaldabaranth.Core.Scripts.Map;
 
@@ -13,7 +14,7 @@ namespace Yaldabaranth.Core
 {
   public enum GameState
   {
-    Running, Menu
+    Generating, Running, Menu
   }
   public class YaldabaranthGame : Game
   {
@@ -21,6 +22,7 @@ namespace Yaldabaranth.Core
     public SpriteBatch Canvas;
     public readonly static bool IsMobile = OperatingSystem.IsAndroid() || OperatingSystem.IsIOS();
     public readonly static bool IsDesktop = OperatingSystem.IsMacOS() || OperatingSystem.IsLinux() || OperatingSystem.IsWindows();
+    public Cosmos Cosmos;
     public Map Map;
     public Menu Menu;
     public EntityStore Entities;
@@ -39,10 +41,11 @@ namespace Yaldabaranth.Core
     protected override void Initialize()
     {
       Canvas = new(GraphicsDevice);
+      Cosmos = new(this);
       Map = new(this);
       Map.GenerateGlobe();
       Entities = new();
-      GameState = GameState.Running;
+      GameState = GameState.Generating;
       FontSystem = new();
       FontSystem.AddFont(File.ReadAllBytes("./Content/Assets/dungeon-mode.ttf"));
       Tileset = new Tileset(this, "./Content/Assets/urizen_tileset.png", 12, 1, 1);
@@ -59,23 +62,24 @@ namespace Yaldabaranth.Core
     {
       if (GameState == GameState.Running)
       {
-        S.Control(this);
+        S.ControlRunning(this);
         S.MoveCamera(this, gameTime.ElapsedGameTime.TotalSeconds);
         S.MoveEntities(this);
         S.See(this);
       }
-      else if (GameState == GameState.Menu)
-      {
-        S.ControlMenu(this);
-      }
+      else if (GameState == GameState.Menu) S.ControlMenu(this);
     }
     protected override void Draw(GameTime gameTime)
     {
       GraphicsDevice.Clear(Color.Black);
       Canvas.Begin(samplerState: SamplerState.PointClamp, transformMatrix: Camera.GetViewMatrix());
-      S.Display(this);
+      if (GameState != GameState.Generating) S.Display(this);
       Canvas.End();
       Canvas.Begin(samplerState: SamplerState.PointClamp);
+      if (GameState == GameState.Generating)
+      {
+        for (int i = 0; i < 10; i++) Cosmos.Update();
+      }
       if (GameState == GameState.Menu) Menu.Draw();
       Canvas.End();
     }
