@@ -41,9 +41,9 @@ namespace Yaldabaranth.Core
     protected override void Initialize()
     {
       Canvas = new(GraphicsDevice);
-      Cosmos = new(this);
       Map = new(this);
       Map.GenerateGlobe();
+      Cosmos = new(this);
       Entities = new();
       GameState = GameState.Generating;
       FontSystem = new();
@@ -78,7 +78,7 @@ namespace Yaldabaranth.Core
       Canvas.Begin(samplerState: SamplerState.PointClamp);
       if (GameState == GameState.Generating)
       {
-        for (int i = 0; i < 10; i++) Cosmos.Update();
+        for (int i = 0; i < 1; i++) Cosmos.Update();
       }
       if (GameState == GameState.Menu) Menu.Draw();
       Canvas.End();
